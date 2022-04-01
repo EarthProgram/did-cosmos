@@ -6,7 +6,7 @@ This document defines the syntax, data model, and operations for the **did:cosmo
 * **Lohan Spies** &lt;<a href="mailto:lohan.spies@ixo.world">lohan.spies@ixo.world</a>&gt;
 * **Shaun Conway** &lt;<a href="mailto:shaun.conway@ixo.world">shaun.conway@ixo.world</a>&gt;
 
-This specification is under active development at https://github.com/EarthProgram/did-cosmos .
+This specification is under active development at [https://github.com/EarthProgram/did-cosmos](https://github.com/EarthProgram/did-cosmos) .
 ## Abstract
 **did:cosmos** is an IID method designed to refer to Cosmos-compatible on-chain assets.
 
