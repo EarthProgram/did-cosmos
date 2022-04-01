@@ -112,7 +112,7 @@ The `asset-id`, if present, MUST be a unique identifier for the particular on-ch
 
 The `namespace` is an alphanumeric string that identifies a distinct namespace managed by the application chain's name server module. These namespaces, e.g., "nft", "bank", "staking", identify where the on-chain asset is maintained on that particular chain. It is used to route incoming resolution requests to the correct asset module.
 
-The `unique-id` is mixed character string that uniquely identifies an asset managed by the application chain under the namespace defined by the `namespace` component. The asset module that handles each namespace MUST enforce uniqueness so that one and onely one asset under that module's control is associated with each `unique-id`. To facilitate off-chain creation of did:cosmos DIDs, prior to creating an on-chain asset, the `unique-id` MUST be a representation of a Secp256k1 public key as encoded for did:key <https://w3c-ccg.github.io/did-method-key/#secp256k1> based on the multibase and multicodec methods: ```multibase(multicodec(public_key))
+The `unique-id` is mixed character string that uniquely identifies an asset managed by the application chain under the namespace defined by the `namespace` component. The asset module that handles each namespace MUST enforce uniqueness so that one and only one asset under that module's control is associated with each `unique-id`. To facilitate off-chain creation of did:cosmos DIDs, prior to creating an on-chain asset, the `unique-id` MUST be a representation of a Secp256k1 public key as encoded for did:key <https://w3c-ccg.github.io/did-method-key/#secp256k1> based on the multibase and multicodec methods: ```multibase(multicodec(public_key))
 
 If `asset-id` is missing, then the DID refers to the chainDescriptor maintained by the chain registry rather than an asset maintained by an asset module.
 
@@ -247,7 +247,7 @@ In addition to the properties defined in DID Core, the following properties are 
 
 #### Context
 
-As an IID, **did:cosmos** DID documents MUST include `https://earthprogram.github.io/NS/iid/v1` as a context value, following the default DID context:
+As an IID, **did:cosmos** DID documents MUST include `https://w3id.org/earth/NS/iid/v1` as a context value, following the default DID context:
 
 ```json
 "@context" : [
