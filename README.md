@@ -34,7 +34,7 @@ In the Cosmos ecosystem, **application chains** are sovereign blockchains built 
 
 To support **did:cosmos**, three modules must be operational: a **chain registry**, a **namespace registry**, and an **asset module**.
 
-<!--```mermaid
+```mermaid
 classDiagram
     class ChainRegistry
     ChainRegistry : -chainDescriptors
@@ -53,7 +53,7 @@ classDiagram
     AssetModule : updateAsset(assetDescriptor)
     AssetModule : deactiveAsset(DID)
 ```
--->
+
 **Chain Registry** Maintains a set of chain descriptors which describe how to access particular application chains, indexed by chainspace.
 
 **Namespace Registry** Maintains a set of namespace descriptors which describe how to access particular asset modules, indexed by namespace.
