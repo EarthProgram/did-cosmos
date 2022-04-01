@@ -1,13 +1,17 @@
 # did:cosmos Method Specification
+
 This document defines the syntax, data model, and operations for the **did:cosmos** DID method.
 
-**Authors** : 
+**Authors** :
+
 * **Joe Andrieu** &lt;<a href="mailto:joe@legreq.com">joe@legreq.com</a>&gt;
 * **Lohan Spies** &lt;<a href="mailto:lohan.spies@ixo.world">lohan.spies@ixo.world</a>&gt;
 * **Shaun Conway** &lt;<a href="mailto:shaun.conway@ixo.world">shaun.conway@ixo.world</a>&gt;
 
-This specification is under active development at [https://github.com/EarthProgram/did-cosmos](https://github.com/EarthProgram/did-cosmos) .
+This specification is under active development at [https://github.com/EarthProgram/did-cosmos](https://github.com/EarthProgram/did-cosmos).
+
 ## Abstract
+
 **did:cosmos** is an IID method designed to refer to Cosmos-compatible on-chain assets.
 
 Interchain Identifiers (IIDs) [[1]](#ref1) are a family of Decentralized Identifier methods which are purpose-designed to identify, refer to, and interact with digital assets within blockchain namespaces.
@@ -25,6 +29,7 @@ DID Methods which conform to the IID specification resolve to a DID document rep
 **did:cosmos** DIDs are IIDs intended identify assets on Cosmos application chains.
 
 ## Architecture Overview
+
 In the Cosmos ecosystem, **application chains** are sovereign blockchains built using the Cosmos SDK. These application chains are comprised of various modules, which perform different functions. We refer to modules that manage the state of on-chain assets as **asset modules**.
 
 To support **did:cosmos**, three modules must be operational: a **chain registry**, a **namespace registry**, and an **asset module**.
@@ -56,10 +61,12 @@ classDiagram
 **Asset Module** Maintains on-chain assets, with its own module-specific functions for creating, updating, and deactivating assets. Each Asset Module MUST also support a method for retrieving the DID Document for a given asset, given a DID managed by that module.
 
 The role of each of these modules is further described below.
+
 ## did:cosmos Syntax
+
 An example `did:cosmos` method identifier is `did:cosmos:version:chainspace:namespace:unique-id`.
 
-There are four forms of did:cosmos DIDs
+There are four forms of did:cosmos DIDs:
 
 ```abnf
 did:cosmos:version:chainspace:namespace:unique-id
@@ -70,7 +77,7 @@ did:cosmos:chainspace
 
 In short, you must have a chainspace, but the version and asset-id are optional.
 
-### did:cosmos DID Syntax (ABNF)
+### did:cosmos ABNF
 
 ```abnf
 did-cosmos          = "did:cosmos:" method-specific-id
@@ -85,9 +92,11 @@ pct-encoded        = "%" HEXDIG HEXDIG
 ```
 
 ### Method Name
+
 A DID that uses this method MUST begin with the prefix `did:cosmos`. The prefix string MUST be in lowercase.
 
 ### Method Specific Identifier
+
 The `did:cosmos` method-specific identifier (`method-specific-id`) is made up of a `version`, `chainspace` and a `asset-id` component.
 
 The `version`, if present, MUST be an integer that identifies a specific version of `did:cosmos` method operations such as
@@ -110,7 +119,9 @@ If `asset-id` is missing, then the DID refers to the chainDescriptor maintained 
 For example, `did:cosmos:ixo` refers to the chain descriptor associated with the "ixo" chain space in the chain registry.
 
 ### did:cosmos DID-URL syntax
+
 **did:cosmos** DIDs may also be used in DID-URLs, based on [RFC5234](https://www.w3.org/TR/did-core/#bib-rfc3986)
+
 ```abnf
 cosmos-did-url      = cosmos-did [path-abempty] [ "#" fragment ]
 path-abempty  = *( "/" segment )
@@ -120,7 +131,9 @@ segment-nz-nc = 1*( unreserved / pct-encoded / sub-delims / "@" )
 pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
 fragment    = *( pchar / "/" / "?" )
 ```
+
 NOTE: **did:cosmos** does not support `query` parts. The path and fragment parts are defined below.
+
 ## Adding support for did:cosmos
 
 To support `did:cosmos`, any Cosmos application chain MUST add an entry in the Cosmos Chain Registry [[3]](#ref3). Each network, such as "mainnet" or "testnet" are independent entries in the registry with unique chain names and separate chain definition files, called`chain.json`. Each `chain.json` MUST provide all of the information required for connecting to that network. The `chain_name` MUST be used to as the `chainspace` string in the `did:cosmos` method. The `chain-id` contained in the `chain.json` will be used to identify the correct Cosmos blockchain network to connect to.
@@ -171,12 +184,13 @@ did:cosmos:1:ixo:nft:7Tqg6BwSSWapxgUDm9KKgg#myresource
 ```
 
 ## DID documents
+
 A DID document associated with a **did:cosmos** DID is a set of data describing an on-chain asset. The representation of a **did:cosmos** DID document MUST meet the DID Core specifications [[5]](#ref5).
 
-### Properties defined for all W3C specification compliant DID documents 
+### Properties defined for all W3C specification compliant DID documents
 
-1. **`@context`** (mandatory): The serialized value of @context MUST be the JSON String https://www.w3.org/ns/did/v1, or a JSON Array where the first item is the JSON String https://www.w3.org/ns/did/v1 and the subsequent items are serialized according to the JSON representation production rules. (This also requires the IID context, described in the following section.)
-2. **`id`**: A **did:cosmos** DID as defined in this document. 
+1. **`@context`** (mandatory): The serialized value of @context MUST be the JSON String `https://www.w3.org/ns/did/v1`, or a JSON Array where the first item is the JSON String `https://www.w3.org/ns/did/v1` and the subsequent items are serialized according to the JSON representation production rules. (This also requires the IID context, described in the following section.)
+2. **`id`**: A **did:cosmos** DID as defined in this document.
 3. **`controller`** (optional): A list of fully qualified DID strings or one string. Contains one or more DIDs whose verification relationships MUST be considered valid for this DID.
 4. **`verificationMethod`** (optional): A list of Verification Methods
 5. **`authentication`** (optional): A list of strings with key aliases or IDs
@@ -200,7 +214,7 @@ encoded public key.
 
 **Note**: Verification method cannot contain both `publicKeyJwk` and `publicKeyMultibase` but must contain at least one of them.
 
-##### Example of Verification method in a DID document
+#### Example of Verification method in a DID document
 
 ```jsonc
 {
@@ -227,12 +241,12 @@ Services can be defined in a DID document to express means of communicating with
 3. **`serviceEndpoint`** (strings): A string that conforms to the rules of RFC3986 [[9]](#ref9) for URIs, a map, or a set composed of a one or more strings that conform to the rules of
 RFC3986 for URIs and/or maps.
 
-
 ### Additional Properties
 
 In addition to the properties defined in DID Core, the following properties are defined for **did:cosmos**.
 
 #### Context
+
 As an IID, **did:cosmos** DID documents MUST include `https://earthprogram.github.io/NS/iid/v1` as a context value, following the default DID context:
 
 ```json
@@ -291,32 +305,52 @@ Proposed properties for resource descriptors in the `LinkedResource` property:
     }]
 }
 ```
+
 #### Transcludes
+
 **`transclude`** (optional): is a new IID document property for specifying where in an IID document to transclude a linked resource. If present, the value of this property MUST be one (or an array of more than one) Linked Resources that eventually dereferences to a raw JSON-LD object. The properties of that JSON-LD object will be injected into the current IID document, replacing the transclude property entirely. The properties of the transcluded JSON-LD MUST be transformed to their absolute representation using the object's `@context` value prior to transclusion. The associated linked resources MUST have a `rel` value of "extension" and a `mediaType` value of "application/ld-json"
+
 #### Extension
+
 **`extension`** (optional): a type of Linked Resource. A JSON-LD extension of the current document. The RDF statements in the extension are to be included in the current IID document, where specified by a "transclude" property. For example, additional service endpoint definitions may be added in a linked resource. These endpoints can be verified as being associated with the IID. But only by those parties who secure the definitions through other privacy respecting mechanisms. This property standardizes how to verifiably move arbitrary RDF statements outside of the IID document context, to provide additional security and privacy.
+
 #### Executable Rights
+
 **`executableRight`** (optional): a type of Linked Resource. This resource is a machine-executable capability that can be invoked by the IID owner or its delegate, using cryptographic materials defined elsewhere in the IID document Verification Methods property.
+
 #### Assertion
-17. **`assertion`** (optional): a rel value for a Linked Resource. Verifiable credentials, verified claims, claim tokens as described in NFT-RFC-008 [[6]](#ref6). This allows arbitrary, yet verifiable attestations to be made either about the asset or about the resources defined by IID references. The attributes represented in these claims can be retrieved through the token interface using a Query by Example. (graph query) mechanism.
-#### Real
+
+**`assertion`** (optional): a rel value for a Linked Resource. Verifiable credentials, verified claims, claim tokens as described in NFT-RFC-008 [[6]](#ref6). This allows arbitrary, yet verifiable attestations to be made either about the asset or about the resources defined by IID references. The attributes represented in these claims can be retrieved through the token interface using a Query by Example. (graph query) mechanism.
+
+#### Rel
+
 **`rel`** (optional): a property of Linked Resource. Defines the relationship of this resource to the IID asset. Known values include:
      1. "evidence" -- The resource is evidence for the creation of the asset.
      2. "encodedRepresentation" -- The resource is a binary representation of the asset, interpretable by compatible software to display or interact with.
      3. "visualRepresentation" -- The resource is a visual representation of the asset
+
 #### Accorded Rights
+
 **`accordedRight`** (optional): a type of relationship to a Linked Resource. Specifies the rights accorded to the IID owner, or its deligate, which may be executed by physical-world institutions or processes. Such as a digital driver's license according certain rights to drive, or a theater ticket according access to a show. The representation framework for such rights must be non-prescriptive, including both plain text statements of rights, e.g., "The controller of this IID is entitled to ...", or more rigorous and computationally evaluatable RDF statements, which might describe in great detail a range of benefits that accompany the basic rights of the token.
+
 #### Display Name
- **`displayName`** (optional): a property of Linked Resources that provide a brief textual label for display.
+
+**`displayName`** (optional): a property of Linked Resources that provide a brief textual label for display.
+
 #### Display Description
+
 **`displayDescription`** (optional): a property of Linked Resources that provide a longer text phrase for displaying additional detail about the asset.
+
 #### Display Icon
+
 **`displayIcon`** (optional): a property of Linked Resources that provide a URL for an image asset to use when displaying the asset.
 
 #### State format for DID documents on ledger
 
-**Consider the following example minimum DID document from DID Core:**
+Consider the following example minimum DID document from DID Core:
+
 #### EXAMPLE 1: A minimal DID document (JSON-LD)
+
 (not a did:cosmos did document, shown for comparison)
 
 ```json
@@ -341,22 +375,21 @@ Proposed properties for resource descriptors in the `LinkedResource` property:
 }
 ```
 
-This minimal DID document is fully conformant with the specification and includes a single verification relationship and method: how to
-authenticate on behalf of the DID Subject.
+This minimal DID document is fully conformant with the specification and includes a single verification relationship and method: how to authenticate on behalf of the DID Subject.
 
 It is useful to note that Verification Methods can be anything\*, e.g., ed25519, secp256k, etc.
 
-**An equivalent example of minimal IID document would be:**
+An equivalent example of minimal IID document would be:
 
 #### EXAMPLE 2: A minimal IID document (JSON-LD)
 
 ```json
 {
-
 "@context" : [
    "https://www.w3.org/ns/did/v1",
    "https://w3id.org/earth/NS/iid/v1"
 ],
+
 "id": "did::cosmos:1:impacthub:nft:abc123",
 
 "authentication": [{
@@ -374,6 +407,8 @@ It is useful to note that Verification Methods can be anything\*, e.g., ed25519,
 }
 ```
 
+Finally, an example using LinkedResources for privacy-respecting linking of external resources.
+
 #### EXAMPLE 3: A minimal, privacy-preserving IID document (JSON-LD)
 
 ```json
@@ -383,7 +418,6 @@ It is useful to note that Verification Methods can be anything\*, e.g., ed25519,
    "https://www.w3.org/ns/did/v1",
    "https://w3id.org/earth/NS/iid/v1"
   ],
-
 
   "id": "did:cosmos:1:impacthub:nft:abc123",
 
@@ -427,6 +461,7 @@ It is useful to note that Verification Methods can be anything\*, e.g., ed25519,
 ```
 
 #### EXAMPLE 4: A privacy-preserving IID document with zCap support (JSON-LD)
+
 ```json
 {
 
@@ -465,7 +500,6 @@ It is useful to note that Verification Methods can be anything\*, e.g., ed25519,
 }
 ```
 
-
 ### JSON-LD
 
 All did:cosmos serializations MUST use json-ld.
@@ -486,9 +520,11 @@ In addition to using the JSON representation production rules, JSON-LD productio
 ```
 
 ## DID operations
-DID and DID  documents are managed by a Cosmos-SDK module that uses the gRPC communication protocol. See the draft method specification [[11]](#ref11) for details on how create, read, update and delete (CRUD) operations are handled in the Cosmos IID module.
+
+**did:cosmos** DID and DID  documents are managed by a Cosmos-SDK module that uses the gRPC communication protocol. See the draft method specification [[11]](#ref11) for details on how create, read, update and delete (CRUD) operations are handled.
 
 ### Create DID (Register)
+
 ```mermaid
 sequenceDiagram
 DID Creator->>Asset Module: Create asset
@@ -514,12 +550,13 @@ Below is an example of create operation with the IID interface used by did:cosmo
 
 This operation creates a new DID using the did:cosmos method along with associated DID document representation.
 
-To create and publish a local `chainspace` DID document use the message: 
+To create and publish a local `chainspace` DID document use the message:
 
 ```golang
 MsgCreateIdentifier(unique-id string, namespace string)
 ```
-To create and publish a remote `chainspace` DID document use the message: 
+
+To create and publish a remote `chainspace` DID document use the message:
 
 ```golang
 MsgCreateIdentifier(unique-id string, namespace string, chainspace string)
@@ -527,17 +564,19 @@ MsgCreateIdentifier(unique-id string, namespace string, chainspace string)
 
 If the input DID is not a valid DID for the **did:cosmos** method, or if the DID already exists on-chain, the message returns an error.
 
-- **`unique-id`**: `MsgCreateIdentifier` unique asset ID inside a Cosmos module.
-- **`namespace`**: the relevant module that control the associated DID on-chain asset.
-- **`chainspace`**: the relevant Cosmos blockchain that the DID should be registered on.
-- **`controller, verificationMethod, authentication, assertionMethod, capabilityInvocation, capabilityDelegation, keyAgreement, service, alsoKnownAs, context`**: Optional parameters in accordance with DID Core specification properties.
+* **`unique-id`**: `MsgCreateIdentifier` unique asset ID inside a Cosmos module.
+* **`namespace`**: the relevant module that control the associated DID on-chain asset.
+* **`chainspace`**: the relevant Cosmos blockchain that the DID should be registered on.
+* **`controller, verificationMethod, authentication, assertionMethod, capabilityInvocation, capabilityDelegation, keyAgreement, service, alsoKnownAs, context`**: Optional parameters in accordance with DID Core specification properties.
 
 #### Client request format for create DID
+
 ```jsonc
 WriteRequest (MsgCreateIdentifier(unique-id string, namespace string)
 ```
 
 #### Example of a create DID client request
+
 ```jsonc
 WriteRequest{
         "data": MsgCreateIdentifier {
@@ -548,7 +587,9 @@ WriteRequest{
 ```
 
 ### Read DID (Resolve and Verify)
+
 Example flow for `did:cosmos:ixo:nft:12345`, an asset hosted by the NFT module on the ixo application chain.
+
 ```mermaid
 sequenceDiagram
 autonumber
@@ -563,26 +604,29 @@ ixo NFT Module->>ixo NFT Module: Construct DID document based on current chain s
 ixo NFT Module->>User: Return DID document for DID `did:cosmos:ixo:nft:12345`
 ```
 
-To resolve did:cosmos method DID documents, the `QueryIdentifierDocument` operation fetches a response from the ledger. The integrity of the DID documents stored on the ledger is guaranteed by the underlying Cosmos blockchain protocol. DID resolution requests can be sent to the gRPC IID resolver interface for a node by passing the fully-qualified DID. 
+To resolve did:cosmos method DID documents, the `QueryIdentifierDocument` operation fetches a response from the ledger. The integrity of the DID documents stored on the ledger is guaranteed by the underlying Cosmos blockchain protocol. DID resolution requests can be sent to the gRPC IID resolver interface for a node by passing the fully-qualified DID.
 
 A DID can be resolved using the gRPC message:
+
 ```golang
 QueryIdentifierDocument(id string)
 ```
+
 The operation CAN be executed by anyone and is publicly available.
 
-- **`id`**: `QueryIdentifierDocument` should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`. It MUST be the DID that is to be resolved. Allowed `chainspace` and `namespace` values are available in the Cosmos Chain Registry [[3]](#ref3)
-- **`metadata`**: Contains DID document metadata? `created`, `updated`, `valid`, `versionId`
-
+* **`id`**: `QueryIdentifierDocument` should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`. It MUST be the DID that is to be resolved. Allowed `chainspace` and `namespace` values are available in the Cosmos Chain Registry [[3]](#ref3)
+* **`metadata`**: Contains DID document metadata? `created`, `updated`, `valid`, `versionId`
 
 The IID resolver is a public facing interface and will be exposed by installing the IID module in the Cosmos blockchain. The IID resolver will resolve down to the `namespace` to query for the DID document. This assume that Cosmos module developers using the `did:cosmos` method will need to implement a DID resolver internal to the module to fetch stored DID documents.
 
 The operation MUST return the DID document and metadata if it exist in the Cosmos blockchain module.
 
 #### Client request format to resolve a DID to its DID document
+
 ```jsonc
 WriteRequest QueryIdentifierDocument(id string)
 ```
+
 #### Example of DID resolution to DID document client request
 
 ```jsonc
@@ -594,26 +638,32 @@ WriteRequest{
 ```
 
 ### Update DID
+
 This operation allow updates to DID documents by the controller(s).
 
 Please note that the DID will remain the same, but the contents of the DID document could change, e.g., by including a new verification key or adding service endpoints.
 
 A DID can be updated using the gRPC message:
+
 ```golang
 MsgUpdateIidDocument(id string, controller string, identifiers list, verificationMethods list, verificationRelationships list, service service, linkedResources list, accordedRights list)
 ```
+
 The operation MUST be executed by an authorized controller of the DID.
 
-- **`id`**: `MsgUpdateIidDocument` should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`. It MUST be the DID that is to be deleted. Allowed `chainspace` and `namespace` values are available in the Cosmos Chain Registry][[3]](#ref3))
-- **`controller`**: should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`.
-- **`identifiers, verificationMethods, verificationRelationships, service, linkedResources, accordedRights`**: Optional parameters in accordance with DID Core and IID specification properties.
+* **`id`**: `MsgUpdateIidDocument` should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`. It MUST be the DID that is to be deleted. Allowed `chainspace` and `namespace` values are available in the Cosmos Chain Registry][[3]](#ref3))
+* **`controller`**: should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`.
+* **`identifiers, verificationMethods, verificationRelationships, service, linkedResources, accordedRights`**: Optional parameters in accordance with DID Core and IID specification properties.
 
 The operation MUST update the DID document and metadata. The operation is not reversible.
 
 #### Client request format to update a DID document
+
 ```jsonc
+
 WriteRequest MsgUpdateIidDocument(id string, controller string, identifiers list, verificationMethods list, verificationRelationships list, service service, linkedResources list, accordedRights list)
 ```
+
 #### Example of update DID document client request
 
 ```jsonc
@@ -672,11 +722,10 @@ ixo NFT Module->>ixo NFT Module: Update NFT owner on chain
 ixo NFT Module-->>NFT DAPP: Transaction result
 NFT DAPP-->>Web Browser: Transaction success
 Web Browser-->>User: Display NFT transfer success
-
-
 ```
 
 ### Revoke DID
+
 This operation deactivates DID records using the did:cosmos method.
 
 ### Deactivate DID
@@ -698,22 +747,26 @@ The operation MUST be executed by an authorized controller of the DID.
 MsgDeactivateIdentifier(id string, Controller string)
 ```
 
-- **`id`**: `MsgDeactivateIdentifier` should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`. It MUST be the DID that is to be deactivated. Allowed `chainspace` and `namespace` values are available in the Cosmos Chain Registry [[3]](#ref3)
-- **`controller`**: should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`.
+* **`id`**: `MsgDeactivateIdentifier` should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`. It MUST be the DID that is to be deactivated. Allowed `chainspace` and `namespace` values are available in the Cosmos Chain Registry [[3]](#ref3)
+* **`controller`**: should be a fully qualified DID of type `did:cosmos:<chainspace>:<namespace>`.
 
 The operation MUST update the DID document metadata and set the Active value to False. The operation is not reversible.
 
 #### Client request format to deactivate a DID
+
 ```jsonc
 WriteRequest MsgDeactivateIdentifier(id string, Controller string)
 ```
 
 A DID can be deactivated using the gRPC message:
 The operation MUST be executed by an authorized controller of the DID.
+
 ```golang
 MsgDeactivateIdentifier(id string, Controller string)
 ```
+
 #### Example of deactivate DID client request
+
 ```jsonc
 WriteRequest{
         "data": MsgDeactivateIdentifier {
@@ -723,9 +776,9 @@ WriteRequest{
 }
 ```
 
-
 ## Security Considerations
-**did:cosmos** is designed for Cosmos compatible blockchains, which secure chain state using a proof-of-stake algorithm. Actively maintained and supporting hundreds of independent blockchains, Cosmos has a well-developed security process defined at https://github.com/cosmos/cosmos-sdk/blob/master/SECURITY.md. 
+
+**did:cosmos** is designed for Cosmos compatible blockchains, which secure chain state using a proof-of-stake algorithm. Actively maintained and supporting hundreds of independent blockchains, Cosmos has a well-developed security process defined at [https://github.com/cosmos/cosmos-sdk/blob/master/SECURITY.md](https://github.com/cosmos/cosmos-sdk/blob/master/SECURITY.md).
 
 All **did:cosmos** DIDs use Secp256k1 keys for initial asset creation and updates. This is the same cryptographic curve used by Bitcoin and Ethereum; it is largely considered secure.
 
@@ -733,7 +786,7 @@ The asset module on application chains is responsible for securing CRUD operatio
 
 ## Privacy Considerations
 
-### IIDs are designed to represent on-chain Assets
+### IIDs are designed to represent on-chain Assets, not people
 
 IIDs, e.g., did:cosmos:ixo:nft:1:abc are designed to represent on-chain assets, as such the identifier itself is never used to refer to real-world objects like people, with associated privacy requirements.
 
@@ -745,7 +798,7 @@ IID references, e.g., did:cosmos:ixo:nft:1:abc#creator may in fact be used to re
 
 IID references specified as Linked Resources offer several privacy-agile ways to associate the on-chain asset with arbitrary resources, providing a way for did:cosmos:ixo:nft:1:abc#creator to refer to an off-chain data store with the sensitive data. For example, an NFT's creator could be specified by a link and a hash to a Verifiable Credential (or a simple JSON file) that states the creator's name. Storing that name on-chain would create a regulatory problem. Linked Resources allow the information to be shared while ensuring the ability to honor requests for deletion.
 
-#### Example of a linked resource that references its creator 
+#### Example of a linked resource that references its creator
 
 ```javascript
 "linkedResource" : {
@@ -763,11 +816,6 @@ IID references specified as Linked Resources offer several privacy-agile ways to
 }
 ```
 
-### Hash based Linked Resource
-
-### Hash Graph based Linked Resource
-
-### Hash Set based Linked Resource
 The `linkedResource` property provides a privacy-enabled way to attach
 digital resources to an on-chain asset. This is an optional property which
 may contain one or more resource descriptors in array. This property provides the metadata required for accessing and using the specified resource, such as the type of resource, a proof to verify the resource, and a service endpoint for requesting and retrieving the resource.
@@ -776,13 +824,14 @@ Resources may be provided in-line or by secure reference. Inline resources are a
 
 This approach allows token owners to manage privacy in three key ways:
 
-1.  Avoids posting potentially sensitive information on-chain in an unavoidably public and irrevocable manner.
-2.  Provides a service endpoint that can apply appropriate privacy and security checks before revealing information.
-3.  The hashgraph resource descriptor type obscures not only the content of the linked resource, but also the quantity of resource objects.
+1. Avoids posting potentially sensitive information on-chain in an unavoidably public and irrevocable manner.
+2. Provides a service endpoint that can apply appropriate privacy and security checks before revealing information.
+3. The hashgraph resource descriptor type obscures not only the content of the linked resource, but also the quantity of resource objects.
 
 Resources may be secured by specifying a `proofType` of hash or hashgraph. A hashgraph uses a merkle tree of hashes for external content associated with this asset. A resource descriptor of this type obscures both the type and the number of such resources, while allowing each such resource to be verifiably linked to the asset. It also provides for privacy-respecting verification of complete disclosure. Anyone who needs to prove they have all of the linked resources can compare their own hash graph of resources with the value stored in the IID Document. Note this anti-censorship technique requires a verifier to discover the type and nature of those resources on their own.
-                    
+
 ## References
+
 <a name="ref1">[1]</a> Interchain Identifiers (draft specification).
 Online at
 [[https://github.com/interNFT/nft-rfc/blob/main/nft-rfc-009.md]](https://github.com/interNFT/nft-rfc/blob/main/nft-rfc-009.md).
@@ -818,7 +867,6 @@ Online at
 <a name="ref8">[8]</a> The Multibase Data Format. IETF.
 Online at
 [[https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03]](https://datatracker.ietf.org/doc/html/draft-multiformats-multibase-03).
-
 
 <a name="ref9">[9]</a> RFC3986 Uniform Resource Identifier (URI): Generic Syntax. IETF.
 Online at
